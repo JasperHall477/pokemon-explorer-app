@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 // Import required shadcn components
 import { Input } from '@/components/ui/input'
@@ -43,6 +44,27 @@ export default function HomePage() {
   // Error incase api fails
   const [error, setError] = useState(false)
   const debouncedSearch = useDebounce(search, 300)
+
+  const badgeColours: { [key: string]: string } = {
+  normal: '#A8A77A',
+	fire: '#EE8130',
+	water: '#6390F0',
+	electric: '#F7D02C',
+	grass: '#7AC74C',
+	ice: '#96D9D6',
+	fighting: '#C22E28',
+	poison: '#A33EA1',
+	ground: '#E2BF65',
+	flying: '#A98FF3',
+	psychic: '#F95587',
+	bug: '#A6B91A',
+	rock: '#B6A136',
+	ghost: '#735797',
+	dragon: '#6F35FC',
+	dark: '#705746',
+	steel: '#B7B7CE',
+	fairy: '#D685AD',
+}
 
 
   useEffect(() => {
@@ -156,8 +178,8 @@ useEffect(() => {
 }, [searchPosition, matches])
 
   return (
-    <main className="max-w-4xl mx-auto pb-16"
-    style={{ zoom: 0.5}}>
+    <main className="max-w-4xl mx-auto pb-16 select-none"
+    style={{ zoom: 0.6}}>
 
         <h1 className="text-3xl font-bold text-center mt-10 mb-1">Pokémon Explorer</h1>
       <p className="text-center text-gray-500 mb-18">Search and find Pokémon</p>
@@ -202,10 +224,12 @@ useEffect(() => {
             const id = pokemon.id
             return (
 
-              
-              <Card key={pokemon.name} className="p-0 gap-2">
+            <Link href={`/details/${pokemon.name}`} key={pokemon.name}>
+              {/* <Card key={pokemon.name} className="p-0 gap-2 cursor-pointer transition hover:shadow-lg hover:bg-gray-300"> */}
+                 <Card className="group p-0 gap-2 cursor-pointer transition hover:shadow-lg hover:bg-gray-200">
                 
-                <div className="w-full aspect-square bg-gray-100 flex items-center justify-center">
+                {/* <div className="w-full aspect-square zzbg-gray-100 flex items-center justify-center"> */}
+                  <div className="w-full items-center justify-center flex bg-gray-100 group-hover:bg-gray-200 transition">
                   <img
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
                     className="w-40 h-40"
@@ -226,16 +250,27 @@ useEffect(() => {
                 <div className="text-left mt-3">
                   {/* <Badge className="bg-gray-800 text-white">Grass</Badge> */}
                   {pokemon.types.map((typeName) => (
-                    <Badge key={typeName} className="bg-gray-800 text-white capitalize mr-1">{typeName}</Badge>
+                    // <Badge className="bg-gray-800 text-white capitalize mr-1">{typeName}</Badge>
+                    <Badge
+                      style={{
+                        backgroundColor: badgeColours[typeName] || "#666",
+                        color: "#fff",
+                        border: '1px solid gray',
+                        textTransform: "capitalize",
+                        marginRight: "4px"}}>
+                      {typeName}</Badge>
                   ))}
+                  
                 </div>
               </div>
 
               </Card>
+            </Link>
             )
           })
         )}
       </div>
+      
 
         {/* Nav buttons  */}
       <div className="flex justify-center gap-4 mt-8">
