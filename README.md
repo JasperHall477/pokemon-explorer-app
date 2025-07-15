@@ -32,6 +32,7 @@ o	Explain the steps you took to understand and resolve the challenge.
 - Trying out tailwind over pure html/css (not experienced with it but was used in the next.js tutorial seemed relevant technology to get experience with)
 - Having the searched pokemon pagination seperate to main and reverting to original state when removing search
 - Having the pokemon appear blurry when increasing size to match figma (you can explicitly state an image to be rendered as pixelated which removes smooth scaling and allows the pixel style to enlarge proportionaly.)
+- Weaknesses calculator (reddit post code helped)
 
 ## Bonus Features
 o	If you implemented any bonus features, briefly describe your approach for each.
@@ -51,7 +52,7 @@ o	If you had more time, what would you refactor, improve, or add to the applicat
 
 ## Changes Log:
 
-    Version 0.1
+ Version 0.1
 - Added relevant shadcn components 
 - Created layout to match figma mock up for main landing page
 - Created example card
@@ -67,7 +68,7 @@ o	If you had more time, what would you refactor, improve, or add to the applicat
 - Added fix for blurry scaling up of pokemon images
 - SMall debounce to search and search begins from typing instead of button click
 - Functionality added to search bar
-- Navigation buttons work within searches
+- Navigation buttons work within filtered search results
 - Added spinner for loading to match figma design closer
 - Functional badge generation for pokemon type (replaced filler for testing card layout)
 - Zoom to fit app to page without scrolling (was hard to navigate lots of pages with scrolling)
@@ -76,3 +77,16 @@ o	If you had more time, what would you refactor, improve, or add to the applicat
 - Added colour mapping to badge type
 - Added hover ui change to pokemon cards
 - Added dynamic details/[pokemon]/page.tsx to display new page for any pokemon clicked 
+
+    version 0.5
+- Details page features
+- Added details page css to look like figma mock up
+- Got all relevant details from pokeAPI and display like in design
+- Added weaknesses calculator 
+- Return to home functionality 
+- small ui changes to main page
+
+todo: Add comments to details page.tsx
+      Fix footbar bar not spanning whole page on homepage
+      Remove weird symbol in pokemon description
+      Vertical alignment of desc text doesnt look right

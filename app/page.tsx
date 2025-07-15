@@ -46,25 +46,25 @@ export default function HomePage() {
   const debouncedSearch = useDebounce(search, 300)
 
   const badgeColours: { [key: string]: string } = {
-  normal: '#A8A77A',
-	fire: '#EE8130',
-	water: '#6390F0',
-	electric: '#F7D02C',
-	grass: '#7AC74C',
-	ice: '#96D9D6',
-	fighting: '#C22E28',
-	poison: '#A33EA1',
-	ground: '#E2BF65',
-	flying: '#A98FF3',
-	psychic: '#F95587',
-	bug: '#A6B91A',
-	rock: '#B6A136',
-	ghost: '#735797',
-	dragon: '#6F35FC',
-	dark: '#705746',
-	steel: '#B7B7CE',
-	fairy: '#D685AD',
-}
+    normal: '#A8A77A',
+    fire: '#EE8130',
+    water: '#6390F0',
+    electric: '#F7D02C',
+    grass: '#7AC74C',
+    ice: '#96D9D6',
+    fighting: '#C22E28',
+    poison: '#A33EA1',
+    ground: '#E2BF65',
+    flying: '#A98FF3',
+    psychic: '#F95587',
+    bug: '#A6B91A',
+    rock: '#B6A136',
+    ghost: '#735797',
+    dragon: '#6F35FC',
+    dark: '#705746',
+    steel: '#B7B7CE',
+    fairy: '#D685AD',
+  }
 
 
   useEffect(() => {
@@ -120,7 +120,7 @@ export default function HomePage() {
     }
   }
 
-  // Calls getPokemonInfo on initial load and whenever position changes (page change)
+  // Gets pokemon info initial and when page position changes
   useEffect(() => {
     getPokemonInfo(position)
   }, [position])
@@ -130,56 +130,64 @@ export default function HomePage() {
 
   useEffect(() => {
 
-  if (!debouncedSearch.trim()) {
-    setFilteredList(pokemonList)
-    setMatches([])
-    return
-  }
-
-  // Filter only once, store all matches
-  const matches = allPokemon.filter(p =>
-    p.name.toLowerCase().startsWith(debouncedSearch.toLowerCase())
-  )
-  setMatches(matches)
-  updateSearchPosition(0)
-}, [debouncedSearch, allPokemon])
-
-
-useEffect(() => {
-  const fetchSearchResults = async () => {
-    if (matches.length === 0) return
-    setLoading(true)
-
-    const sliced = matches.slice(searchPosition, searchPosition + 12)
-    const detailed: Pokemon[] = []
-
-    for (let i = 0; i < sliced.length; i++) {
-      const res = await fetch(sliced[i].url)
-      const data = await res.json()
-
-      const typesArray: string[] = []
-      for (let i = 0; i < data.types.length; i++) {
-        typesArray.push(data.types[i].type.name)
-      }
-
-      detailed.push({
-        name: data.name,
-        url: sliced[i].url,
-        id: data.id,
-        types: typesArray,
-      })
+    if (!debouncedSearch.trim()) {
+      setFilteredList(pokemonList)
+      setMatches([])
+      return
     }
 
-    setFilteredList(detailed)
-    setLoading(false)
-  }
+    // Filter only once, store all matches
+    const matches = allPokemon.filter(p =>
+      p.name.toLowerCase().startsWith(debouncedSearch.toLowerCase())
+    )
+    setMatches(matches)
+    updateSearchPosition(0)
+  }, [debouncedSearch, allPokemon])
 
-  fetchSearchResults()
-}, [searchPosition, matches])
+
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (matches.length === 0) {
+        return
+      }
+
+      setLoading(true)
+
+      // Extract 12 pokemon matches for current page
+      const sliced = matches.slice(searchPosition, searchPosition + 12)
+      const detailed: Pokemon[] = []
+
+      // Loop through each pokemon in current slice 
+      for (let i = 0; i < sliced.length; i++) {
+        // Get more detailed info on each pokemon
+        const res = await fetch(sliced[i].url)
+        const data = await res.json()
+
+        // Create/fill array with types
+        const typesArray: string[] = []
+        for (let i = 0; i < data.types.length; i++) {
+          typesArray.push(data.types[i].type.name)
+        }
+
+        // Add full details to final array
+        detailed.push({
+          name: data.name,
+          url: sliced[i].url,
+          id: data.id,
+          types: typesArray,
+        })
+      }
+
+      // FInished looping add full details array to current filtered list
+      setFilteredList(detailed)
+      setLoading(false)
+    }
+
+    fetchSearchResults();
+  }, [searchPosition, matches])
 
   return (
-    <main className="max-w-4xl mx-auto pb-16 select-none"
-    style={{ zoom: 0.6}}>
+    <main className="max-w-4xl mx-auto pb-16 select-none" style={{ zoom: 0.6}}>
 
         <h1 className="text-3xl font-bold text-center mt-10 mb-1">Pokémon Explorer</h1>
       <p className="text-center text-gray-500 mb-18">Search and find Pokémon</p>
@@ -251,7 +259,7 @@ useEffect(() => {
                   {/* <Badge className="bg-gray-800 text-white">Grass</Badge> */}
                   {pokemon.types.map((typeName) => (
                     // <Badge className="bg-gray-800 text-white capitalize mr-1">{typeName}</Badge>
-                    <Badge
+                    <Badge key={typeName}
                       style={{
                         backgroundColor: badgeColours[typeName] || "#666",
                         color: "#fff",
@@ -301,7 +309,12 @@ useEffect(() => {
   )}
 </div>
 
-  <p className="font-semibold text-center mt-4">Thank you for using Pokemon Browser!</p>
+           <hr className="w-full border-gray-200 mt-10" />                  
+        <div className="text-center text-xs font-semibold pb-4 pt-10">
+            Thank you for using Pokémon Browser!
+        </div>   
+
     </main>
+    
   )
 }
