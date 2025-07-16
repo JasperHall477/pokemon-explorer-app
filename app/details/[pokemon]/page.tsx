@@ -247,7 +247,7 @@ export default async function HomePage({ params }: { params: { pokemon: string }
 
                 
                     <div className="border border-gray-200 rounded-xl p-4 shadow-sm">
-                        <p className="font-semibold">Ability</p>
+                        <p className="font-semibold">Abilities</p>
                         <div className="capitalize text-xs">
                             {abilityEffect.map((ability) => (
                                 <div key={ability.name}>
