@@ -1,13 +1,15 @@
 'use client'
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from 'next/navigation'
 
 // Import required shadcn components
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 
+// Custom components
+import PokemonCard from "@/components/ui/PokemonCard"
+import Footer from "@/components/ui/Footer";
 
 import { useDebounce } from "@/lib/debounce"
 
@@ -31,6 +33,8 @@ export default function HomePage() {
 
   const [allPokemon, updateAllPokemon] = useState<BasicPokemon[]>([])
 
+  const router = useRouter()
+  
   // Stores loading state to check if we display loading symbol or not
   const [loading, setLoading] = useState(false)
   // Stores current position for pagination/what pokemon to get data on
@@ -45,28 +49,7 @@ export default function HomePage() {
   const [error, setError] = useState(false)
   const debouncedSearch = useDebounce(search, 300)
 
-  const badgeColours: { [key: string]: string } = {
-    normal: '#A8A77A',
-    fire: '#EE8130',
-    water: '#6390F0',
-    electric: '#F7D02C',
-    grass: '#7AC74C',
-    ice: '#96D9D6',
-    fighting: '#C22E28',
-    poison: '#A33EA1',
-    ground: '#E2BF65',
-    flying: '#A98FF3',
-    psychic: '#F95587',
-    bug: '#A6B91A',
-    rock: '#B6A136',
-    ghost: '#735797',
-    dragon: '#6F35FC',
-    dark: '#705746',
-    steel: '#B7B7CE',
-    fairy: '#D685AD',
-  }
-
-
+  
   useEffect(() => {
     const getAllNames = async () => {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=10000`)
@@ -187,134 +170,98 @@ export default function HomePage() {
   }, [searchPosition, matches])
 
   return (
-    <main className="max-w-4xl mx-auto pb-16 select-none" style={{ zoom: 0.6}}>
+    <>
+    <h1 className="text-3xl font-bold text-center pt-2">Pokémon Browser</h1>
+    <p className="text-center text-gray-500 mb-4">Search and find Pokémon</p>
+    <hr className="w-full border-gray-200 mt-8 mb-4" />
 
-        <h1 className="text-3xl font-bold text-center mt-10 mb-1">Pokémon Explorer</h1>
-      <p className="text-center text-gray-500 mb-18">Search and find Pokémon</p>
+      <main className="max-w-4xl mx-auto pb-16 select-none" style={{ zoom: 0.6}}>
 
-      <div className="grid grid-cols-3 items-center mb-3">
-        
-        <p className="text-xl font-medium">
-          {search.trim()
-            ? `Search results for "${search}"`
-            : "Explore Pokémon"}
-        </p>
 
-        <div className="col-span-2 flex justify-end">
-          {/* <Input placeholder="Find Pokémon" className="w-60" /> */}
-          <Input
-            placeholder="Find Pokémon"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-68"
-          />
-          <Button>Search</Button>
-        </div>
-      </div>
-
-      {error && (
-          <div className="pt-10 pb-10 text-red-700 p-3 mb-4 text-center">
-            Can't access PokeAPI. Please try again later.
-          </div>
-        )}  
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-       {loading ? (
-
-        <div className="w-15 h-15 border-2 m-100 border-black border-t-white rounded-full animate-spin" />  
-        
-      ) : (
-        
-          // (search.trim() ? filteredList.slice(searchPosition, searchPosition + 12) : filteredList).map((pokemon, index) => {
-          (search.trim() ? filteredList : pokemonList).map((pokemon) => {
+        <div className="grid grid-cols-3 items-center mb-3">
           
-            // const id = position + index + 1
-            const id = pokemon.id
-            return (
+          <p className="text-xl font-semibold">
+            {search.trim()
+              ? `Search results for "${search}"`
+              : "Explore Pokémon"}
+          </p>
 
-            <Link href={`/details/${pokemon.name}`} key={pokemon.name}>
-              {/* <Card key={pokemon.name} className="p-0 gap-2 cursor-pointer transition hover:shadow-lg hover:bg-gray-300"> */}
-                 <Card className="group p-0 gap-2 cursor-pointer transition hover:shadow-lg hover:bg-gray-200">
-                
-                {/* <div className="w-full aspect-square zzbg-gray-100 flex items-center justify-center"> */}
-                  <div className="w-full items-center justify-center flex bg-gray-100 group-hover:bg-gray-200 transition">
-                  <img
-                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-                    className="w-40 h-40"
-                    style={
-                      {
-                        imageRendering: "pixelated"
-                      }
-                    }
-                  />
+          <div className="col-span-2 flex justify-end">
+            {/* <Input placeholder="Find Pokémon" className="w-60" /> */}
+            <Input
+              placeholder="Find Pokémon"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-68"
+            />
+            {/* <Button>Search</Button> */}
+          </div>
+        </div>
+
+        {error && (
+            <div className="pt-10 pb-10 text-red-700 p-3 mb-4 text-center">
+              Can't access PokeAPI. Please try again later.
+            </div>
+          )}  
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+        {loading ? (
+
+          <div className="w-15 h-15 border-2 m-100 border-black border-t-white rounded-full animate-spin" />  
+          
+        ) : (
+          
+            // (search.trim() ? filteredList.slice(searchPosition, searchPosition + 12) : filteredList).map((pokemon, index) => {
+            (search.trim() ? filteredList : pokemonList).map((pokemon) => {
+            
+              // const id = position + index + 1
+            
+              return (
+
+             
+              <Link href={`/details/${pokemon.name}`} key={pokemon.name}>
+                <div onClick={() => setLoading(true)} className="relative cursor-pointer">
+                  <PokemonCard key={pokemon.name} pokemon={pokemon} />
                 </div>
-              
-              <div className="p-3 pt-2">
-                {/* <h2 className="text-small font-medium mb-1">{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</h2> */}
-                <h2 className="text-small font-medium capitalize mb-1">{pokemon.name}</h2>
-                <p className="text-xs text-gray-500 mb-2">#{String(id).padStart(4, "0")}</p>
+              </Link>
+                    )
+            })
+          )}
+        </div>
+        
 
-                
-                <div className="text-left mt-3">
-                  {/* <Badge className="bg-gray-800 text-white">Grass</Badge> */}
-                  {pokemon.types.map((typeName) => (
-                    // <Badge className="bg-gray-800 text-white capitalize mr-1">{typeName}</Badge>
-                    <Badge key={typeName}
-                      style={{
-                        backgroundColor: badgeColours[typeName] || "#666",
-                        color: "#fff",
-                        border: '1px solid gray',
-                        textTransform: "capitalize",
-                        marginRight: "4px"}}>
-                      {typeName}</Badge>
-                  ))}
-                  
-                </div>
-              </div>
-
-              </Card>
-            </Link>
-            )
-          })
+          {/* Nav buttons  */}
+        <div className="flex justify-center gap-4 mt-8">
+          {search.trim() ? (
+            <>
+            <Button
+              onClick={() => updateSearchPosition(prev => Math.max(prev - 12, 0))}
+              disabled={searchPosition === 0}
+              className={searchPosition === 0 ? "opacity-50 cursor-not-allowed" : ""}
+            >&lt; Back</Button>
+            <Button
+              onClick={() => updateSearchPosition(prev => prev + 12)}
+              disabled={searchPosition + 12 >= matches.length}
+              className={(searchPosition + 12 >= matches.length) ? "opacity-50 cursor-not-allowed" : ""}
+            >Next &gt;</Button>
+          </>
+        ) : (
+          <>
+            <Button
+              onClick={() => updatePosition(prev => Math.max(prev - 12, 0))}
+              disabled={position === 0}
+              className={position === 0 ? "opacity-50 cursor-not-allowed" : ""}
+            >&lt; Back</Button>
+            <Button
+              onClick={() => updatePosition(prev => prev + 12)}
+            >Next &gt;</Button>
+          </>
         )}
       </div>
-      
-
-        {/* Nav buttons  */}
-      <div className="flex justify-center gap-4 mt-8">
-      {search.trim() ? (
-    <>
-      <Button
-        onClick={() => updateSearchPosition(prev => Math.max(prev - 12, 0))}
-        disabled={searchPosition === 0}
-        className={searchPosition === 0 ? "opacity-50 cursor-not-allowed" : ""}
-      >&lt; Back</Button>
-      <Button
-        onClick={() => updateSearchPosition(prev => prev + 12)}
-        disabled={searchPosition + 12 >= matches.length}
-        className={(searchPosition + 12 >= matches.length) ? "opacity-50 cursor-not-allowed" : ""}
-      >Next &gt;</Button>
-    </>
-  ) : (
-    <>
-      <Button
-        onClick={() => updatePosition(prev => Math.max(prev - 12, 0))}
-        disabled={position === 0}
-        className={position === 0 ? "opacity-50 cursor-not-allowed" : ""}
-      >&lt; Back</Button>
-      <Button
-        onClick={() => updatePosition(prev => prev + 12)}
-      >Next &gt;</Button>
-    </>
-  )}
-</div>
-
-           <hr className="w-full border-gray-200 mt-10" />                  
-        <div className="text-center text-xs font-semibold pb-4 pt-10">
-            Thank you for using Pokémon Browser!
-        </div>   
-
+        
     </main>
-    
+
+    <Footer /> 
+    </>
   )
 }

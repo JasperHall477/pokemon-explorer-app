@@ -1,10 +1,12 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from "next/link"
+import Footer from "@/components/ui/Footer";
 
 
 export default async function HomePage({ params }: { params: { pokemon: string } }) {
 
+    // Colour map for badges
     const badgeColours: { [key: string]: string } = {
         normal: '#A8A77A',
         fire: '#EE8130',
@@ -26,28 +28,32 @@ export default async function HomePage({ params }: { params: { pokemon: string }
         fairy: '#D685AD',
     }
 
+    // All types for working out weaknesses
     const allTypes = [
         "normal", "fire", "water", "electric", "grass", "ice", "fighting", "poison",
         "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon",
         "dark", "steel", "fairy"
     ]
 
+    // Main details of pokemon
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${params.pokemon}`)
     const details = await response.json()
 
+    // Get all types of this pokemon
     const typesArray = []
     for (let i = 0; i < details.types.length; i++) {
         typesArray.push(details.types[i].type.name)
     }
     
+    // Seperate call to different endpoint for species detaisl
     const species = await fetch(details.species.url)
     const speciesDetails = await species.json()
 
-    const description = speciesDetails.flavor_text_entries.find((entry: any) => entry.language.name === "en").flavor_text
+    // Get english description remove and strange symbol that appears in them all
+    const description = speciesDetails.flavor_text_entries.find((entry: any) => entry.language.name === "en").flavor_text.replace(/\f/g, " ")
+    const category = speciesDetails.genera.find((genus: any) => genus.language.name === "en")?.genus
 
-
-    const category = speciesDetails.genera.find((genus: any) => genus.language.name === "en")?.genus || "Unknown"
-
+    // Calculate allowed genders 
     function getGenders(rate: number): string {
         if (rate === -1) {
             return "Genderless"
@@ -80,10 +86,11 @@ export default async function HomePage({ params }: { params: { pokemon: string }
         abilities.push(details.abilities[i].ability.name)
     }
    
-    
+    // Seperate endpoint to get abilities details
     const abilityurl = await fetch(details.abilities[0].ability.url)
     const abilityDetails = await abilityurl.json()
 
+    // Seperate array to hold each ability and its description(effect) together
     const abilityEffect = []
     for (let i = 0; i < details.abilities.length; i++) {
         const abilityName = details.abilities[i].ability.name
@@ -103,10 +110,12 @@ export default async function HomePage({ params }: { params: { pokemon: string }
 
     const typeUrls = details.types.map((t: any) => t.type.url)
 
+    // Calculate weaknesses depending on pokemon types
     const typeEffectMap: { [type: string]: number } = {}
 
+
     for (const attackType of allTypes) {
-    typeEffectMap[attackType] = 1 
+        typeEffectMap[attackType] = 1 
     }
 
     for (const url of typeUrls) {
@@ -125,10 +134,7 @@ export default async function HomePage({ params }: { params: { pokemon: string }
             typeEffectMap[t.name] *= 0
         })
     }
-
-    const weaknesses = Object.entries(typeEffectMap)
-  .filter(([type, multiplier]) => multiplier > 1)
-  .map(([type]) => type)
+    const weaknesses = Object.entries(typeEffectMap).filter(([type, multiplier]) => multiplier > 1).map(([type]) => type)
 
 
   
@@ -167,10 +173,10 @@ export default async function HomePage({ params }: { params: { pokemon: string }
         <div className="max-w-4xl mx-auto px-4">   
         
          
-                <div className="bg-[#f5f4f4] border shadow-lg rounded-l p-4 flex items-start mr-10 ml-10">
+            <div className="bg-[#f5f4f4] border shadow-lg rounded-l p-4 flex items-center zitems-start mr-10 ml-10 mt-3">
                     
                     
-                <div className="flex-shrink-0 w-12 h-12 bg-white border justify-center rounded-full">
+                <div className="flex-shrink-0 flex items-center w-12 h-12 bg-white border justify-center rounded-full">
                     <img
                         src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/cherish-ball.png"
                         alt="Poké Ball"
@@ -287,10 +293,7 @@ export default async function HomePage({ params }: { params: { pokemon: string }
 
     </main>
 
-    <hr className="w-screen border-t border-gray-200 mt-10" />                  
-        <div className="text-center text-xs font-semibold pb-4 pt-10">
-            Thank you for using Pokémon Browser!
-        </div>  
+     <Footer />  
     </>
   )
 }
