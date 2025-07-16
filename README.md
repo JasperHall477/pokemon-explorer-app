@@ -83,7 +83,7 @@ My particular approach was chosen because it is lightweight and simple, being bu
 - Hover highlight on cards to show they are selectable elements and its not a static page.
 - Added colours to the badges depending on type (e.g water blue etc) to improve user friendly-ness and improve ui.
 - Scaled the landing page out slightly to allow all important features to fit on the screen without scrolling (Changing pages and having to scroll down each time was a pain)
-- For loading states, I used a loading spinner. Not only was it shown in the designs and I wanted to adhere to match the designs closely to fit requirements of this task, but the spinner is also perfect for this app to show the loading states between pages and searches etc. It helps make the app more seamless and prevent pauses when waiting on api call responses.
+- For loading states, I used a loading spinner. Not only was it shown in the designs and I wanted to match the designs closely to fit requirements of this task, but the spinner is also perfect for this app to show the loading states between pages and searches etc. It helps make the app more seamless and prevent pauses when waiting on api call responses.
 
 
 ## 7 Self-Reflection & Potential Improvements
