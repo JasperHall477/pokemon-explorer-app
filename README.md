@@ -2,12 +2,12 @@
 Objective
 Develop a basic Next.js application that fetches data from the PokéAPI, displays it according to a provided Figma design, and utilizes shadcn/ui components for the user interface.
 
-## Project Setup & Running Instructions
+## 1 Project Setup & Running Instructions
 ### Prerequisites
 - Node.js
 - npm 
-### 1 Setup
-- First, Clone the Repository using `git clone https://github.com/jasperhall477/pokemon-explorer-app.git` or via github browser interface)
+### Setup
+- First, Clone the Repository using `git clone https://github.com/jasperhall477/pokemon-explorer-app.git` or via github browser interface
 - Go to project folder `cd pokemon-explorer-app`
 - Install packages `npm install`
 - Run development server to view the app `npm run dev`
@@ -34,37 +34,47 @@ The shadcn components used were to match the figma design mock ups.
 - Another change was the removal of the search button. Although I implemented this and made it functional, after implementing the automatic search start from typing it became redundant and so was removed even though it was in the figma design.
 - I also changed the badges used for the types and weaknesses to have colour coordination depending on the type (e.g water = blue) which wasn't in the design.
 - Added the actual value to the stats section to allow more specific understanding of each pokemons stats.
+- Removed user select from to make the ui more user friendly and professional although not mentioned specifically in the figma designs.
 
 ## 3 State Management Approach
-o	Describe how you managed application state (e.g., Pokémon list, current page for pagination, selected Pokémon details).
-o	Explain why you chose your particular approach (e.g., useState, useReducer, Context API, or a library if you felt it necessary, though simple solutions are fine for this scale).
+I made use of useState and useEffect to manage application state. useState allows me to store dynamic data and user inputs such as pokemonList and position, and useEffect provides a way of triggering code upon loading as well as when a dependency changes such as getPokemonInfo when the page (position) changes. A more extensive list of useStates used and what for include:
+- pokemonList - Stores pokemon data used to populate cards on the Landing page.
+- allPokemon - Stores all pokemone names to allow searching.
+- loading - This useState is used to decide if we should dispaly a loading spinner or not and is updated mainly during api calls.
+- position - Tracks the current page position so we tell the getPokemonInfo function what pokemon to get info on.
+- searchPosition - The same as position but for the search pagination instead.
+- matches - Store the list of pokemon that match the search results
+- filteredList - Stores the current list of pokemon to display on the current page only, either same as pokemonList 
+- search - Stores the search input
+- error - Similar to loading, but decides if we display an error message or not (used if api call fails)
+
+My particular approach was chosen because it is lightweight and simple, being built in functionality with React, and allows a simple way of storing, and updating dynamic data. There is plenty of documentation which made it easy to understand and implement for a small project like this. 
 
 ## 4 API Interaction Strategy
 ### Main Page 
-- Fetches basic info on all pokemon on initial load to allow searching functionality
+- Fetches basic info on all pokemon on initial load to allow searching functionality.
 - Fetches slightly more detailed info on 12 pokemon at a time to populate a page, occurs during initial load, and during pagination to get fresh pokemon details for each page. 
 - Async calls to API to allow page to continue with background functions during the calls we make.
 
 ### Details Page
-- This page uses a single async fetch for the specific pokemon on the page
-- Then has to use multiple seperate fetches to more specific API endpoints to get additional details (e.g pokemon-species, abilities)
+- This page uses a single async fetch for the specific pokemon on the page.
+- Then has to use multiple seperate fetches to more specific API endpoints to get additional details (e.g pokemon-species, abilities).
 
 ### Hooks
-- Small debounce on the search input lib\debounce.tsx
-- Used to prevent performance issues making too many searches when quickly typing a pokemon gives 300ms delay
+- Small debounce on the search input lib\debounce.tsx.
+- Used to improve performance by preventing too many searches being made when quickly typing a pokemon by adding a 300ms delay.
 - useEffect react hook used to allow triggering certain functions under specific conditions such as retrieving a new list of pokemon details on page change.
 
 
 ## 5 Challenges Encountered & Solutions
-o	Describe at least one technical challenge you faced during development.
-o	This could be anything from a tricky CSS layout, an unexpected API response, a Next.js specific issue, or a problem with state management.
-o	Explain the steps you took to understand and resolve the challenge.
+- I had not Typescript not used before although my extensive experience with javascript made it very familiar along with very detailed documentation to help bridge the gap.
+- Trying out tailwind over pure html/css (not experienced with it but was used in most next.js tutorials so seemed a relevant technology to get experience with). This was easily overcome due to the large number of tutorials and useful sites documentation like https://tailwind.build/classes that helped me to easily convert all my css knowledge into tailwind readable versions.
 
-- Typescript not used before although my extensive experience with javascript made it very familiar along with very extensive and detailed documentation.
-- Trying out tailwind over pure html/css (not experienced with it but was used in the next.js tutorial seemed relevant technology to get experience with). This was easily overcome due to the large number of tutorials and useful sites documentation like https://tailwind.build/classes that helped me to easily convert all my css knowledge into tailwind readable.
-- Having the searched pokemon pagination seperate to main and reverting to original state when removing search entry.
-- Having the pokemon appear blurry when increasing size to match figma (you can explicitly state an image to be rendered as pixelated which removes smooth scaling and allows the pixel style to enlarge proportionaly.)
-- Weaknesses calculator (reddit post code helped)
+- Having the searched pokemon pagination seperate to main and reverting to original state when removing search entry. I added two seperate versions of the nav buttons, one set to update the search position, and one to update the standard page position. I could then display the search buttons only if there was an entry in the search input.
+
+- Having the pokemon appear blurry when increasing size to match figma. This was overcome by explicitly stating the image to be rendered as "pixelated" which removes smooth scaling and allows the pixel style to enlarge properly.
+
+- Calculating weaknesses was was a slight challenge, especially after my original solution ended up not working correctly on pokemon that had multiple types. To have it work for all pokemon even with multiple types, I had to combine damage multipliers and calculate the overall value to get the leftover weakness types. I started with an object containing all types with a default multiplier of 1. I then went through each of the pokemons types and get its damage relations. I could then update the object depending on the damage relations and calculate any weakness as being more than 1 after the calculation. This took longer than expected but there were useful posts with similar issues that helped.
 
 ## 6 Bonus Features
 - Added small debounce to search for performance improvements.
@@ -77,14 +87,14 @@ o	Explain the steps you took to understand and resolve the challenge.
 
 
 ## 7 Self-Reflection & Potential Improvements
-I am most proud of being able to quickly adapt to using tailwind css and typescript. Normally, I would have attempted to tackle this using pure html, css, and javascript, however the extensive use of tailwind in tutorials for next.js I found made me want to use it, not only because there was lots of documentation and help, but because I wanted to adhere to modern industry standards.
+I am most proud of being able to quickly adapt to using tailwind css and typescript, which are technologies I haven't used in a real project before. Normally, I would have attempted to tackle this using pure html, css, and javascript, however the extensive use of tailwind in tutorials for next.js I found made me want to use it, not only because there was lots of documentation and help, but because I wanted to adhere to modern industry standards.
 
-One improvement to be made that I noticed slightly too late, was that the return home button simply returns to the home page in its default state. I would have ideally liked to have saved their current position in the pagination and returned to this state when going back as well as keeping any search entry still input. I could achieve this by storing them in session storage and checking if these values exist in session storage when loading up the Landing page.
+One improvement to be made that I noticed slightly too late, was that the return home button simply returns to the home page in its default state. I would have ideally liked to have saved their current position in the pagination and returned to this state when going back as well as keeping any search input saved. I could achieve this by storing them in session storage and checking if these values exist in session storage when loading up the Landing page.
 
-Another self reflection I have made is to do with modularity of the app. Although I am happy with the features added and how closely the app meets the design mock ups, I think more of it could have been added as seperate components such as the header and joint navigation buttons. Due to my lack of experience with React and specifically Next.js, I wasn't thinking very much in terms of components during the development but I would like to improve on this to ensure my code is more reusable and maintainable. 
+Another self reflection I have made is to do with modularity of the app. Although I am happy with the features added and how closely the app meets the design mock ups, I think more of it could have been added as seperate components such as the header and joint navigation buttons. Due to my lack of experience with React and specifically Next.js, I wasn't thinking as much in terms of components as a more experienced React developer would during the development, but I would like to improve on this to ensure my code is more reusable and maintainable in future. 
 
 Some more minor improvements I would add to the application include:
-- More interactionability (hover over/click badges or stats to show further details).
+- More interactivity (hover over/click badges or stats to show further details).
 - Show more details (Which game each pokemon is from, evolution stage/future evolutions).
 - Allow searching by ID.
 
@@ -131,5 +141,6 @@ Some more minor improvements I would add to the application include:
 - Created seperate Footer component instead of hard coding#
 - Added more comments to code/tidy up of code
 
-todo: Add comments to details page.tsx
-      Vertical alignment of desc text doesnt look right
+version 1.0
+- Readme improves
+- Code comments

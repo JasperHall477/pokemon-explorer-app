@@ -21,6 +21,7 @@ type Pokemon = {
   types: string[]
 }
 
+// Basic info for ALL pokemon on initial load
 type BasicPokemon = {
   name: string
   url: string
@@ -30,26 +31,26 @@ export default function HomePage() {
   
   // Store pokemon data
   const [pokemonList, updatePokemonList] = useState<Pokemon[]>([])
-
   const [allPokemon, updateAllPokemon] = useState<BasicPokemon[]>([])
-
-  const router = useRouter()
   
   // Stores loading state to check if we display loading symbol or not
   const [loading, setLoading] = useState(false)
-  // Stores current position for pagination/what pokemon to get data on
+    // Error incase api fails
+  const [error, setError] = useState(false)
+
+  // Stores current position for pagination/what pokemon to get data on initialise to 0
   const [position, updatePosition] = useState(0)
   // Seperate position for during search process
   const [searchPosition, updateSearchPosition] = useState(0)
   const [matches, setMatches] = useState<BasicPokemon[]>([])
-
   const [filteredList, setFilteredList] = useState<Pokemon[]>([])
+
+  // Store search input
   const [search, setSearch] = useState("")
-  // Error incase api fails
-  const [error, setError] = useState(false)
+
   const debouncedSearch = useDebounce(search, 300)
 
-  
+  // Get all pokemon names for search functionality on initial load no dependencies as a one off
   useEffect(() => {
     const getAllNames = async () => {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=10000`)
@@ -110,7 +111,7 @@ export default function HomePage() {
 
   
 
-
+  // Find and update the matches every time a search happens
   useEffect(() => {
 
     if (!debouncedSearch.trim()) {
@@ -121,6 +122,7 @@ export default function HomePage() {
 
     // Filter only once, store all matches
     const matches = allPokemon.filter(p =>
+      // Check if it starts with search input (a match)
       p.name.toLowerCase().startsWith(debouncedSearch.toLowerCase())
     )
     setMatches(matches)
@@ -128,6 +130,7 @@ export default function HomePage() {
   }, [debouncedSearch, allPokemon])
 
 
+  // Get search results when search page changes or new search input
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (matches.length === 0) {
@@ -215,16 +218,13 @@ export default function HomePage() {
             (search.trim() ? filteredList : pokemonList).map((pokemon) => {
             
               // const id = position + index + 1
-            
               return (
-
-             
-              <Link href={`/details/${pokemon.name}`} key={pokemon.name}>
-                <div onClick={() => setLoading(true)} className="relative cursor-pointer">
-                  <PokemonCard key={pokemon.name} pokemon={pokemon} />
-                </div>
-              </Link>
-                    )
+                <Link href={`/details/${pokemon.name}`} key={pokemon.name}>
+                  <div onClick={() => setLoading(true)} className="relative cursor-pointer">
+                    <PokemonCard key={pokemon.name} pokemon={pokemon} />
+                  </div>
+                </Link>
+              )
             })
           )}
         </div>

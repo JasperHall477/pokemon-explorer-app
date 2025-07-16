@@ -113,7 +113,7 @@ export default async function HomePage({ params }: { params: { pokemon: string }
     // Calculate weaknesses depending on pokemon types
     const typeEffectMap: { [type: string]: number } = {}
 
-
+    // Set all to 1 as default
     for (const attackType of allTypes) {
         typeEffectMap[attackType] = 1 
     }
@@ -122,6 +122,7 @@ export default async function HomePage({ params }: { params: { pokemon: string }
         const responseType = await fetch(url)
         const typeData = await responseType.json()
 
+        // Corresponding damage relation to a calculation
         typeData.damage_relations.double_damage_from.forEach((t: any) => {
             typeEffectMap[t.name] *= 2
         })
@@ -134,6 +135,7 @@ export default async function HomePage({ params }: { params: { pokemon: string }
             typeEffectMap[t.name] *= 0
         })
     }
+    // Anything more than 1 is a weakness
     const weaknesses = Object.entries(typeEffectMap).filter(([type, multiplier]) => multiplier > 1).map(([type]) => type)
 
 
